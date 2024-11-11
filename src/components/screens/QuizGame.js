@@ -99,8 +99,16 @@ const QuizScreen = ({ navigation }) => {
         ));
     };
 
+    const ButtonMenu= ({ label, onClick }) => (
+        <TouchableOpacity style={styles.buttonmenu} onPress={onClick} activeOpacity={0.8}>
+            <Image source={require('./button_overlay2.png')} style={styles.buttonImage2menu} />
+            <Text style={styles.buttonText}>{label}</Text>
+        </TouchableOpacity>
+    );
+
     return (
         <ImageBackground source={require('./background.png')} style={styles.background}>
+            <ButtonMenu label="Назад" onClick={() => navigation.navigate('Menu')} />
             <View style={styles.container}>
                 {!gameOver ? (
                     <View style={styles.quizContainer}>
@@ -148,7 +156,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         fontSize: 25,
         color: '#FFFFFF',
-        fontWeight: 'bold',
+        fontWeight: 'medium',
         textAlign: 'center',
         top: '40%',
         transform: [{ translateY: -0.5 * (20 / 2) }],
@@ -163,13 +171,16 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     frameQuest: {
-        width: 400,
+        width: 450,
         height: 100,
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 50,
     },
     quizContainer: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
     },
     gameOverContainer: {
@@ -200,6 +211,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    buttonmenu: {
+        display: 'flex',
+        width: 150, // Установите ширину в соответствии с размером изображения
+        height: 50, 
+        margin: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      buttonImage2menu: {
+        position: 'absolute',
+        width: '100%', // Установите ширину в 100%
+        height: 150, // Установите высоту в соответствии с размером изображения кнопки
+        resizeMode: 'contain',
+      },
 });
 
 export default QuizScreen;

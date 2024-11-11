@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
+import PulsingClover from './loading';
 
 const MenuScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
@@ -23,11 +24,18 @@ const MenuScreen = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
+      <PulsingClover />
     );
   }
+
+  const ButtonWithOverlay = ({ label, onClick }) => {
+    return (
+      <TouchableOpacity style={styles.button} onPress={onClick} activeOpacity={0.8}>
+        <Image source={require('./button_overlay2.png')} style={styles.buttonImage2} />
+        <Text style={styles.buttonText}>{label}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <ImageBackground 
@@ -47,24 +55,15 @@ const MenuScreen = ({ navigation }) => {
 
       <View style={styles.menuContainer}>
         <View style={styles.row}>
-          <ButtonWithOverlay label="PLAY" onClick={() => navigation.navigate('Game')} />
-          <ButtonWithOverlay label="QUIZ" onClick={() => navigation.navigate('Quiz')} />
+          <ButtonWithOverlay label="Play" onClick={() => navigation.navigate('Game')} />
+          <ButtonWithOverlay label="Quiz" onClick={() => navigation.navigate('Quiz')} />
         </View>
         <View style={styles.row}>
-          <ButtonWithOverlay label="RULES" />
-          <ButtonWithOverlay label="PROGRESS" />
+          <ButtonWithOverlay label="Rules" />
+          <ButtonWithOverlay label="Progress" />
         </View>
       </View>
     </ImageBackground>
-  );
-};
-
-const ButtonWithOverlay = ({ label, onClick }) => {
-  return (
-    <TouchableOpacity style={styles.button} onPress={onClick} activeOpacity={0.8}>
-      <Image source={require('./button_overlay2.png')} style={styles.buttonImage2} />
-      <Text style={styles.buttonText}>{label}</Text>
-    </TouchableOpacity>
   );
 };
 
@@ -151,12 +150,37 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     position: 'absolute',
-    fontSize: 20, // Меньший размер шрифта
+    fontSize: 16, // Меньший размер шрифта
     color: '#FFFFFF',
-    fontWeight: 'bold',
+    fontWeight: 'medium',
     textAlign: 'center',
     top: '50%',
     transform: [{ translateY: -0.5 * (20 / 2) }],
+  },
+  containerclover: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  cloverWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 50,
+    animation: 'pulse 1.5s infinite', // Пульсация
+  },
+  cloverImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    animation: 'pulse 3s infinite', // Пульсация
+  },
+  loadingTextclover: {
+    position: 'absolute',
+    bottom: 20,
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
