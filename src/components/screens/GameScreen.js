@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Image, StyleSheet, Dimensions, Text, Alert, ImageBackground } from 'react-native';
+import { View, Image, StyleSheet, Dimensions, Text, Alert, ImageBackground, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
@@ -9,7 +9,7 @@ const coinImage = require('./coin.png');
 const bootImage = require('./boot.png');
 const basketImage = require('./basket.png');
 
-const GameScreen = () => {
+const GameScreen = ({ navigation }) => {
   const [basketPosition, setBasketPosition] = useState(width / 2 - basketWidth / 2);
   const [items, setItems] = useState([]);
   const [score, setScore] = useState(0);
@@ -100,8 +100,18 @@ const GameScreen = () => {
     startDroppingItems();
   };
 
+  const ButtonWithOverlay = ({ label, onClick }) => {
+    return (
+      <TouchableOpacity style={styles.button} onPress={onClick} activeOpacity={0.8}>
+        <Image source={require('./button_overlay2.png')} style={styles.buttonImage2} />
+        <Text style={styles.buttonText}>{label}</Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <ImageBackground source={require('./background.png')} style={styles.background}>
+      <ButtonWithOverlay label="Назад" onClick={() => navigation.navigate('Menu')} />
     <GestureHandlerRootView style={styles.container}>
       <Text style={styles.score}>Счет: {score}</Text>
       <PanGestureHandler onGestureEvent={handleGestureEvent} onEnded={handleGestureEnd}>
@@ -151,6 +161,29 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 50,
     height: itemHeight,
+  },
+  button: {
+    display: 'flex',
+    width: 150, // Установите ширину в соответствии с размером изображения
+    height: 50, 
+    margin: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonImage2: {
+    position: 'absolute',
+    width: '100%', // Установите ширину в 100%
+    height: 150, // Установите высоту в соответствии с размером изображения кнопки
+    resizeMode: 'contain',
+  },
+  buttonText: {
+    position: 'absolute',
+    fontSize: 16, // Меньший размер шрифта
+    color: '#FFFFFF',
+    fontWeight: 'medium',
+    textAlign: 'center',
+    top: '50%',
+    transform: [{ translateY: -0.5 * (20 / 2) }],
   },
 });
 
