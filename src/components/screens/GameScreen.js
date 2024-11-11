@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Image, StyleSheet, Dimensions, Text, Alert } from 'react-native';
+import { View, Image, StyleSheet, Dimensions, Text, Alert, ImageBackground } from 'react-native';
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
-const basketWidth = 100; // ширина корзины
-const itemHeight = 50; // высота предметов (boot или coin)
+const basketWidth = 120; // ширина корзины
+const itemHeight = 54; // высота предметов (boot или coin)
 const coinImage = require('./coin.png');
 const bootImage = require('./boot.png');
 const basketImage = require('./basket.png');
@@ -101,6 +101,7 @@ const GameScreen = () => {
   };
 
   return (
+    <ImageBackground source={require('./background.png')} style={styles.background}>
     <GestureHandlerRootView style={styles.container}>
       <Text style={styles.score}>Счет: {score}</Text>
       <PanGestureHandler onGestureEvent={handleGestureEvent} onEnded={handleGestureEnd}>
@@ -116,6 +117,7 @@ const GameScreen = () => {
         />
       ))}
     </GestureHandlerRootView>
+    </ImageBackground>
   );
 };
 
@@ -124,7 +126,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+  },
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
   },
   score: {
     position: 'absolute',
