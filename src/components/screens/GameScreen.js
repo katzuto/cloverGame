@@ -27,14 +27,14 @@ const GameScreen = () => {
       const randomX = Math.random() * (width - 50);
       const type = Math.random() < 0.5 ? 'coin' : 'boot';
       setItems(prev => [...prev, { x: randomX, type, fall: 0 }]);
-    }, 1000);
+    }, 1500); // увеличиваем интервал до 1500 мс
   };
 
   useEffect(() => {
     const fallItems = setInterval(() => {
       setItems(prev => {
         return prev.map(item => {
-          const updatedItem = { ...item, fall: item.fall + 5 };
+          const updatedItem = { ...item, fall: item.fall + 2 }; // уменьшаем скорость падения
           if (updatedItem.fall > height) {
             if (updatedItem.type === 'coin') {
               setMissedCoins(prev => prev + 1);
@@ -62,21 +62,26 @@ const GameScreen = () => {
 
   const checkCollision = () => {
     items.forEach((item, index) => {
-      if (item.fall >= height - itemHeight && item.x >= basketPosition && item.x <= basketPosition + basketWidth) {
+      // Проверяем, достиг ли предмет верхней границы корзины
+      if (item.fall >= height - itemHeight - 140 && // высота корзины
+          item.x >= basketPosition && 
+          item.x <= basketPosition + basketWidth) {
         if (item.type === 'coin') {
           setScore(prev => prev + 1);
         } else {
           setScore(prev => Math.max(prev - 1, 0));
         }
         setItems(prev => prev.filter((_, i) => i !== index)); // Удаляем пойманный элемент
+      } else if (item.fall >= height) {
+        if (item.type === 'coin') {
+          setMissedCoins(prev => prev + 1);
+        }
       }
     });
 
     if (missedCoins >= 3) {
       clearInterval(intervalRef.current);
-      Alert.alert('Игра окончена', `Вы проиграли! Ваш счет: ${score}`, [
-        { text: 'OK' },
-      ]);
+      Alert.alert('Игра окончена', `Вы проиграли! Ваш счет: ${score}`, [{ text: 'OK' }]);
       resetGame();
     }
   };
