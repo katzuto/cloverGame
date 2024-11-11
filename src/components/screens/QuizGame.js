@@ -19,7 +19,7 @@ const QuizScreen = ({ navigation }) => {
             if (currentQuestion < questions.length - 1) {
                 setCurrentQuestion(currentQuestion + 1);
             } else {
-                alert("Вы выиграли! Ваш счет: " + score);
+                alert("Вы выиграли! Ваш счет: " + (score + 1)); // Учитываем правильный ответ
             }
         } else {
             setGameOver(true);
@@ -32,38 +32,49 @@ const QuizScreen = ({ navigation }) => {
         setGameOver(false);
     };
 
-    const ButtonWithOverlay = ({ label, onClick, key }) => {
-        return (
-            <TouchableOpacity key={key} style={styles.button} onPress={onClick} activeOpacity={0.8}>
-                <Image source={require('./button_base.png')} style={styles.buttonImage2} />
-                <Text style={styles.buttonText}>{label}</Text>
-            </TouchableOpacity>
-        );
+    const ButtonWithOverlay = ({ label, onClick }) => (
+        <TouchableOpacity style={styles.button} onPress={onClick} activeOpacity={0.8}>
+            <Image source={require('./frame_for_answer.png')} style={styles.buttonImage2} />
+            <Text style={styles.buttonText}>{label}</Text>
+        </TouchableOpacity>
+    );
+
+    const ButtonFrameQuestion = ({ label }) => (
+        <View style={styles.frameQuest}>
+            <Image source={require('./frame_for_question.png')} style={styles.questionFrame} />
+            <Text style={styles.buttonText}>{label}</Text>
+        </View>
+    );
+
+    const renderOptions = () => {
+        const options = questions[currentQuestion].options;
+        const optionPairs = [];
+
+        for (let i = 0; i < options.length; i += 2) {
+            optionPairs.push(options.slice(i, i + 2));
+        }
+
+        return optionPairs.map((pair, index) => (
+            <View style={styles.optionRow} key={index}>
+                {pair.map((option) => (
+                    <ButtonWithOverlay
+                        key={option}
+                        label={option}
+                        onClick={() => handleAnswer(option)}
+                    />
+                ))}
+            </View>
+        ));
     };
 
     return (
-        <ImageBackground 
-            source={require('./background.png')}
-            style={styles.background}
-        >
+        <ImageBackground source={require('./background.png')} style={styles.background}>
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => navigation.navigate('Menu')}>
-                    <Image source={require('./settings.png')} style={styles.homeIcon} />
-                </TouchableOpacity>
-
                 {!gameOver ? (
                     <View style={styles.quizContainer}>
-                        <Text style={styles.questionText}>{questions[currentQuestion].question}</Text>
-                        
-                        {/* Новая обертка для кнопок */}
+                        <ButtonFrameQuestion label={questions[currentQuestion].question} />
                         <View style={styles.optionsContainer}>
-                            {questions[currentQuestion].options.map((option, index) => (
-                                <ButtonWithOverlay
-                                    key={index}
-                                    onClick={() => handleAnswer(option)}
-                                    label={option}
-                                /> 
-                            ))}
+                            {renderOptions()}
                         </View>
                     </View>
                 ) : (
@@ -82,47 +93,51 @@ const QuizScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    optionsContainer: {
-        flexDirection: 'row', // Выровнять кнопки в строку
-        flexWrap: 'wrap', // Позволяет переносить кнопки на новую строку
-        justifyContent: 'center', // Центруем кнопки
-    },
-    buttonText: {
-        position: 'absolute',
-        fontSize: 20,
-        color: '#FFFFFF',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        top: '37%',
-        transform: [{ translateY: -0.5 * (20 / 2) }],
-    },
-    buttonImage2: {
-        position: 'absolute',
-        width: '100%',
-        height: 150,
-        resizeMode: 'contain',
-    },
-    homeIcon: {
-        width: 30,
-        height: 30,
-        marginBottom: 20,
-    },
-    quizContainer: {
-        display: "flex",
         justifyContent: 'center',
         alignItems: 'center',
     },
-    questionText: {
-        fontSize: 20,
-        marginBottom: 20,
-        textAlign: 'center',
+    optionsContainer: {
+        alignItems: 'center',
+        paddingTop: 20,
+        width: '100%',
     },
-    button: {
-        width: 150,
-        height: 50,
-        margin: 15,
+    questionFrame: { 
+        position: 'absolute', 
+        width: '150%', 
+        height: 250, 
+        resizeMode: 'contain'
+    },
+    optionRow: {
+        flexDirection: 'row', 
+        justifyContent: 'space-between',
+        width: '50%',
+    },
+    buttonText: {
+        position: 'absolute',
+        fontSize: 25,
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        top: '40%',
+        transform: [{ translateY: -0.5 * (20 / 2) }],
+    },
+    background: {
+        flex: 1,
+        resizeMode: 'cover',
+    },
+    buttonImage2: {
+        width: '150%',
+        height: 150,
+        resizeMode: 'contain',
+    },
+    frameQuest: {
+        width: 400,
+        height: 100,
         justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 50,
+    },
+    quizContainer: {
         alignItems: 'center',
     },
     gameOverContainer: {
@@ -145,6 +160,13 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 18,
         textAlign: 'center',
+    },
+    button: {
+        width: 150,
+        height: 50,
+        marginBottom: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

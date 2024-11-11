@@ -1,189 +1,147 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  Animated,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  PanResponder,
-} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Image, StyleSheet, Dimensions, Text, Alert } from 'react-native';
+import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const ITEM_SIZE = 50; // Размер падающих предметов
-const BASKET_WIDTH = 100; // Ширина корзины
-const BASKET_HEIGHT = 50; // Высота корзины
-const FALL_SPEED = 3000; // Время падения предметов (мс)
+const { width, height } = Dimensions.get('window');
+const basketWidth = 100; // ширина корзины
+const itemHeight = 50; // высота предметов (boot или coin)
+const coinImage = require('./coin.png');
+const bootImage = require('./boot.png');
+const basketImage = require('./basket.png');
 
-const GameComponent = () => {
+const GameScreen = () => {
+  const [basketPosition, setBasketPosition] = useState(width / 2 - basketWidth / 2);
+  const [items, setItems] = useState([]);
   const [score, setScore] = useState(0);
   const [missedCoins, setMissedCoins] = useState(0);
-  const [items, setItems] = useState([]);
-  const [gameOver, setGameOver] = useState(false);
-  const basketX = useRef(new Animated.Value(SCREEN_WIDTH / 2 - BASKET_WIDTH / 2)).current;
-  const itemInterval = useRef(null);
+  const intervalRef = useRef(null);
+  const prevBasketPosition = useRef(basketPosition);
 
-  // Инициализация PanResponder для управления корзиной
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: (evt, gestureState) => {
-        let newBasketX = gestureState.moveX - BASKET_WIDTH / 2;
-
-        // Ограничение по краям экрана
-        if (newBasketX < 0) newBasketX = 0;
-        if (newBasketX > SCREEN_WIDTH - BASKET_WIDTH) newBasketX = SCREEN_WIDTH - BASKET_WIDTH;
-
-        basketX.setValue(newBasketX);
-      },
-    })
-  ).current;
-
-  // Функция для добавления падающего предмета
-  const addItem = () => {
-    const newItem = {
-      id: Math.random().toString(),
-      x: Math.random() * (SCREEN_WIDTH - ITEM_SIZE), // Падение по всей ширине экрана
-      y: new Animated.Value(-ITEM_SIZE), // Начало с самого верха экрана
-      type: Math.random() > 0.2 ? 'coin' : 'other', // 80% шанс монеты
-    };
-
-    setItems((prevItems) => [...prevItems, newItem]);
-
-    Animated.timing(newItem.y, {
-      toValue: SCREEN_HEIGHT,
-      duration: FALL_SPEED,
-      useNativeDriver: false,
-    }).start(() => {
-      // Удаление предмета, если он не пойман
-      setItems((prevItems) => prevItems.filter((item) => item.id !== newItem.id));
-      if (newItem.type === 'coin') setMissedCoins((prev) => prev + 1);
-    });
-  };
-
-  // Запуск интервала для падения предметов
   useEffect(() => {
-    itemInterval.current = setInterval(addItem, 1000);
-    return () => clearInterval(itemInterval.current);
+    startDroppingItems();
+    return () => clearInterval(intervalRef.current);
   }, []);
 
-  // Проверка конца игры
-  useEffect(() => {
-    if (missedCoins >= 5) {
-      setGameOver(true);
-      clearInterval(itemInterval.current);
-    }
-  }, [missedCoins]);
-
-  // Проверка попадания предмета в корзину
-  const checkCatch = () => {
-    items.forEach((item) => {
-      const basketPos = basketX.__getValue();
-      if (
-        item.y._value >= SCREEN_HEIGHT - BASKET_HEIGHT - ITEM_SIZE &&
-        item.x >= basketPos &&
-        item.x <= basketPos + BASKET_WIDTH
-      ) {
-        if (item.type === 'coin') {
-          setScore((prevScore) => prevScore + 1);
-        } else {
-          setScore((prevScore) => Math.max(prevScore - 1, 0));
-        }
-        setItems((prevItems) => prevItems.filter((i) => i.id !== item.id)); // Удаляем пойманные предметы
-      }
-    });
+  const startDroppingItems = () => {
+    intervalRef.current = setInterval(() => {
+      const randomX = Math.random() * (width - 50);
+      const type = Math.random() < 0.5 ? 'coin' : 'boot';
+      setItems(prev => [...prev, { x: randomX, type, fall: 0 }]);
+    }, 1000);
   };
 
-  // Проверка на совпадение между предметами и корзиной
   useEffect(() => {
-    const catchInterval = setInterval(checkCatch, 100);
-    return () => clearInterval(catchInterval);
-  }, [items]);
+    const fallItems = setInterval(() => {
+      setItems(prev => {
+        return prev.map(item => {
+          const updatedItem = { ...item, fall: item.fall + 5 };
+          if (updatedItem.fall > height) {
+            if (updatedItem.type === 'coin') {
+              setMissedCoins(prev => prev + 1);
+            }
+            return null;
+          }
+          return updatedItem;
+        }).filter(Boolean);
+      });
+    }, 100);
+    
+    return () => clearInterval(fallItems);
+  }, []);
+
+  const handleGestureEvent = (event) => {
+    const newPosition = prevBasketPosition.current + event.nativeEvent.translationX;
+    if (newPosition >= 0 && newPosition <= width - basketWidth) {
+      setBasketPosition(newPosition);
+    }
+  };
+
+  const handleGestureEnd = () => {
+    prevBasketPosition.current = basketPosition;
+  };
+
+  const checkCollision = () => {
+    items.forEach((item, index) => {
+      if (item.fall >= height - itemHeight && item.x >= basketPosition && item.x <= basketPosition + basketWidth) {
+        if (item.type === 'coin') {
+          setScore(prev => prev + 1);
+        } else {
+          setScore(prev => Math.max(prev - 1, 0));
+        }
+        setItems(prev => prev.filter((_, i) => i !== index)); // Удаляем пойманный элемент
+      }
+    });
+
+    if (missedCoins >= 3) {
+      clearInterval(intervalRef.current);
+      Alert.alert('Игра окончена', `Вы проиграли! Ваш счет: ${score}`, [
+        { text: 'OK' },
+      ]);
+      resetGame();
+    }
+  };
+
+  useEffect(() => {
+    const checkCollisionInterval = setInterval(checkCollision, 100);
+    return () => clearInterval(checkCollisionInterval);
+  }, [items, missedCoins]);
+
+  const resetGame = () => {
+    setItems([]);
+    setScore(0);
+    setMissedCoins(0);
+    setBasketPosition(width / 2 - basketWidth / 2);
+    prevBasketPosition.current = width / 2 - basketWidth / 2;
+    startDroppingItems();
+  };
 
   return (
-    <View style={styles.container} {...panResponder.panHandlers}>
-      <Text style={styles.score}>Score: {score}</Text>
-      {items.map((item) => (
-        <Animated.View
-          key={item.id}
-          style={[styles.item, { left: item.x, transform: [{ translateY: item.y }] }]}
-        >
-          <Image
-            source={item.type === 'coin' ? require('./coin.png') : require('./boot.png')}
-            style={{ width: ITEM_SIZE, height: ITEM_SIZE }}
-          />
-        </Animated.View>
-      ))}
-
-      {/* Корзина */}
-      <Animated.View style={[styles.basket, { transform: [{ translateX: basketX }] }]}>
-        <Image source={require('./basket.png')} style={{ width: BASKET_WIDTH, height: BASKET_HEIGHT }} />
-      </Animated.View>
-
-      {/* Экран конца игры */}
-      {gameOver && (
-        <View style={styles.gameOverScreen}>
-          <Text style={styles.gameOverText}>Game Over</Text>
-          <Text style={styles.gameOverText}>Score: {score}</Text>
-          <TouchableOpacity
-            onPress={() => {
-              setGameOver(false);
-              setScore(0);
-              setMissedCoins(0);
-              setItems([]);
-              itemInterval.current = setInterval(addItem, 1000);
-            }}
-          >
-            <Text style={styles.restartText}>Restart Game</Text>
-          </TouchableOpacity>
+    <GestureHandlerRootView style={styles.container}>
+      <Text style={styles.score}>Счет: {score}</Text>
+      <PanGestureHandler onGestureEvent={handleGestureEvent} onEnded={handleGestureEnd}>
+        <View style={[styles.basket, { left: basketPosition }]}>
+          <Image source={basketImage} style={styles.basketImage} />
         </View>
-      )}
-    </View>
+      </PanGestureHandler>
+      {items.map((item, index) => (
+        <Image
+          key={index}
+          source={item.type === 'coin' ? coinImage : bootImage}
+          style={[styles.item, { left: item.x, top: item.fall }]}
+        />
+      ))}
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1c1c1c',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    justifyContent: 'flex-start', // Изменяем на flex-start
-    position: 'relative', // Добавляем для абсолютного позиционирования
+    backgroundColor: '#f0f0f0',
   },
   score: {
     position: 'absolute',
-    top: 40,
+    top: 50,
     right: 20,
     fontSize: 24,
-    color: 'white',
-  },
-  item: {
-    position: 'absolute',
-    width: ITEM_SIZE,
-    height: ITEM_SIZE,
+    fontWeight: 'bold',
   },
   basket: {
     position: 'absolute',
-    bottom: 20,
-    width: BASKET_WIDTH,
-    height: BASKET_HEIGHT,
+    bottom: 40,
+    width: basketWidth,
   },
-  gameOverScreen: {
+  basketImage: {
+    width: basketWidth,
+    height: 100,
+  },
+  item: {
     position: 'absolute',
-    top: SCREEN_HEIGHT / 3,
-    alignItems: 'center',
-  },
-  gameOverText: {
-    fontSize: 32,
-    color: 'white',
-    marginVertical: 10,
-  },
-  restartText: {
-    fontSize: 24,
-    color: '#ff0',
+    width: 50,
+    height: itemHeight,
   },
 });
 
-export default GameComponent;
+export default GameScreen;
