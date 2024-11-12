@@ -57,10 +57,10 @@ const MenuScreen = ({ navigation }) => {
         <View style={styles.row}>
           <ButtonWithOverlay label="Play" onClick={() => navigation.navigate('Game')} />
           <ButtonWithOverlay label="Quiz" onClick={() => navigation.navigate('Quiz')} />
-          <ButtonWithOverlay label="Bonus" onClick={() => navigation.navigate('BonusGame')} />
+          {/* <ButtonWithOverlay label="Bonus" onClick={() => navigation.navigate('BonusGame')} /> */}
         </View>
         <View style={styles.row}>
-          <ButtonWithOverlay label="Rules" />
+          <ButtonWithOverlay label="Rules" onClick={() => navigation.navigate('Rules')}/>
           <ButtonWithOverlay label="Progress" />
         </View>
       </View>
