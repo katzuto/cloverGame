@@ -43,7 +43,7 @@ const MenuScreen = ({ navigation }) => {
       style={styles.background}
     >
       <View style={styles.topMenu}>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Settings')}>
           <Image source={require('./settings.png')} style={styles.icon} />
         </TouchableOpacity>
         <View style={styles.coinsContainer}>
