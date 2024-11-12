@@ -1,64 +1,75 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, ImageBackground } from 'react-native';
 
+// Функция для перемешивания массива
+const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+};
+
 // Пример вопросов по теме "Клевер"
 const questions = [
-    { question: "Сколько листьев у четырехлистного клевера?", options: ["4", "3", "5", "6"], answer: "4" },
-    { question: "Какой цвет считается символом удачи?", options: ["Синий", "Красный", "Зеленый", "Желтый"], answer: "Зеленый" },
-    { question: "В какой стране клевер является официальным символом удачи?", options: ["США", "Ирландия", "Япония", "Франция"], answer: "Ирландия" },
-    { question: "Какое растение символизирует удачу?", options: ["Клевер", "Роза", "Лилия", "Тюльпан"], answer: "Клевер" },
-    { question: "Какой цвет ассоциируется с удачей?", options: ["Красный", "Зеленый", "Синий", "Желтый"], answer: "Зеленый" },
-    { question: "Какой предмет часто используется для привлечения удачи?", options: ["Подкова", "Ключ", "Монета", "Кольцо"], answer: "Подкова" },
-    { question: "Какой день недели считается самым удачным?", options: ["Понедельник", "Вторник", "Среда", "Четверг"], answer: "Четверг" },
-    { question: "Какой символ часто используется для привлечения удачи?", options: ["Крест", "Звезда", "Сердце", "Треугольник"], answer: "Звезда" },
-    { question: "Какой месяц считается самым удачным для начала новых дел?", options: ["Январь", "Февраль", "Март", "Апрель"], answer: "Март" },
-    { question: "Какой предмет часто носят для привлечения удачи?", options: ["Браслет", "Кольцо", "Кулон", "Часы"], answer: "Кулон" },
-    { question: "Какой цвет часто используется для привлечения удачи в фэн-шуй?", options: ["Красный", "Зеленый", "Синий", "Желтый"], answer: "Красный" },
-    { question: "Какой предмет часто кладут под подушку для привлечения удачи?", options: ["Монета", "Ключ", "Кольцо", "Камень"], answer: "Монета" },
-    { question: "Какой день недели считается самым неудачным?", options: ["Понедельник", "Вторник", "Среда", "Четверг"], answer: "Понедельник" },
-    { question: "Какой предмет часто вешают над дверью для привлечения удачи?", options: ["Подкова", "Ключ", "Монета", "Кольцо"], answer: "Подкова" },
-    { question: "Какой цвет ассоциируется с удачей в Китае?", options: ["Красный", "Зеленый", "Синий", "Желтый"], answer: "Красный" },
-    { question: "Какой предмет часто используют для привлечения удачи в Японии?", options: ["Подкова", "Ключ", "Монета Хотэй", "Кольцо Хотэй"], answer: "Монета Хотэй" },
-    { question: "Какой день недели считается самым удачным для свадеб?", options: ["Понедельник", "Вторник", "Среда", "Четверг"], answer: "Четверг" },
-    { question: "Какой предмет часто используют для привлечения удачи в Индии?", options: ["Подкова", "Ключ", "Анкуша", "Кольцо"], answer: "Анкуша" },
-    { question: "Какой цвет ассоциируется с удачей в Ирландии?", options: ["Красный", "Зеленый", "Синий", "Желтый"], answer: "Зеленый" },
-    { question: "Какой предмет часто используют для привлечения удачи в России?", options: ["Подкова", "Ключ", "Монета", "Кольцо"], answer: "Подкова" },
-    { question: "Какой день недели считается самым удачным для начала новых проектов?", options: ["Понедельник", "Вторник", "Среда", "Четверг"], answer: "Среда" },
-    { question: "Какой предмет часто используют для привлечения удачи в Европе?", options: ["Подкова", "Ключ", "Монета", "Кольцо"], answer: "Подкова" },
-    { question: "Какой день недели считается самым удачным для финансовых операций?", options: ["Понедельник", "Вторник", "Среда", "Четверг"], answer: "Среда" },
-    { question: "Какой предмет часто используют для приzвлечения удачи в Южной Америке?", options: ["Подкова", "Ключ", "Амулет", "Кольцо"], answer: "Амулет" },
-    { question: "Какой день недели считается самым удачным для путешествий?", options: ["Понедельник", "Вторник", "Среда", "Четверг"], answer: "Четверг" },
-    { question: "Какой предмет часто используют для привлечения удачи в Северной Америке?", options: ["Подкова", "Ключ", "Амулет", "Кольцо"], answer: "Амулет" },
-    { question: "Какой день недели считается самым удачным для романтических встреч?", options: ["Понедельник", "Вторник", "Среда", "Четверг"], answer: "Среда" },
-    { question: "Какой предмет часто используют для привлечения удачи в Австралии?", options: ["Подкова", "Ключ", "Амулет", "Кольцо"], answer: "Амулет" },
-    { question: "Какой амулет считается символом удачи в Египте?", options: ["Глаз Гора", "Пентаграмма", "Жезл", "Анкх"], answer: "Глаз Гора" },
-    { question: "Какой символ считается удачным в фэн-шуй?", options: ["Дракон", "Лотос", "Бабочка", "Кошка"], answer: "Дракон" },
-    { question: "Какой день недели считается удачным для заключения сделок?", options: ["Понедельник", "Вторник", "Среда", "Четверг"], answer: "Вторник" },
-    { question: "Какой цвет ассоциируется с удачей в Японии?", options: ["Красный", "Зеленый", "Синий", "Черный"], answer: "Красный" },
-    { question: "Какой день недели считается удачным для начала учебы?", options: ["Понедельник", "Вторник", "Среда", "Четверг"], answer: "Понедельник" },
-    { question: "Какой талисман приносит удачу в Африке?", options: ["Подкова", "Камень", "Амулет", "Древний символ"], answer: "Амулет" },
-    { question: "Какой предмет приносит удачу в арабских странах?", options: ["Подкова", "Камень", "Чудо-камень", "Ладан"], answer: "Чудо-камень" }    
+    { question: "How many leaves does a four-leaf clover have?", options: ["4", "3", "5", "6"], answer: "4" },
+    { question: "What color is considered a symbol of luck?", options: ["Blue", "Red", "Green", "Yellow"], answer: "Green" },
+    { question: "In which country is the clover an official symbol of luck?", options: ["USA", "Ireland", "Japan", "France"], answer: "Ireland" },
+    { question: "Which plant symbolizes luck?", options: ["Clover", "Rose", "Lily", "Tulip"], answer: "Clover" },
+    { question: "What color is associated with luck?", options: ["Red", "Green", "Blue", "Yellow"], answer: "Green" },
+    { question: "What item is often used to attract luck?", options: ["Horseshoe", "Key", "Coin", "Ring"], answer: "Horseshoe" },
+    { question: "What day of the week is considered the luckiest?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], answer: "Thursday" },
+    { question: "What symbol is often used to attract luck?", options: ["Cross", "Star", "Heart", "Triangle"], answer: "Star" },
+    { question: "What month is considered the luckiest to start new ventures?", options: ["January", "February", "March", "April"], answer: "March" },
+    { question: "What item is often worn to attract luck?", options: ["Bracelet", "Ring", "Pendant", "Watch"], answer: "Pendant" },
+    { question: "What color is often used to attract luck in Feng Shui?", options: ["Red", "Green", "Blue", "Yellow"], answer: "Red" },
+    { question: "What item is often placed under a pillow to attract luck?", options: ["Coin", "Key", "Ring", "Stone"], answer: "Coin" },
+    { question: "What day of the week is considered the unluckiest?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], answer: "Monday" },
+    { question: "What item is often hung above a door to attract luck?", options: ["Horseshoe", "Key", "Coin", "Ring"], answer: "Horseshoe" },
+    { question: "What color is associated with luck in China?", options: ["Red", "Green", "Blue", "Yellow"], answer: "Red" },
+    { question: "What item is often used to attract luck in Japan?", options: ["Horseshoe", "Key", "Hotei Coin", "Hotei Ring"], answer: "Hotei Coin" },
+    { question: "What day of the week is considered the luckiest for weddings?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], answer: "Thursday" },
+    { question: "What item is often used to attract luck in India?", options: ["Horseshoe", "Key", "Ankush", "Ring"], answer: "Ankush" },
+    { question: "What color is associated with luck in Ireland?", options: ["Red", "Green", "Blue", "Yellow"], answer: "Green" },
+    { question: "What item is often used to attract luck in Russia?", options: ["Horseshoe", "Key", "Coin", "Ring"], answer: "Horseshoe" },
+    { question: "What day of the week is considered the luckiest to start new projects?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], answer: "Wednesday" },
+    { question: "What item is often used to attract luck in Europe?", options: ["Horseshoe", "Key", "Coin", "Ring"], answer: "Horseshoe" },
+    { question: "What day of the week is considered the luckiest for financial operations?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], answer: "Wednesday" },
+    { question: "What item is often used to attract luck in South America?", options: ["Horseshoe", "Key", "Amulet", "Ring"], answer: "Amulet" },
+    { question: "What day of the week is considered the luckiest for travel?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], answer: "Thursday" },
+    { question: "What item is often used to attract luck in North America?", options: ["Horseshoe", "Key", "Amulet", "Ring"], answer: "Amulet" },
+    { question: "What day of the week is considered the luckiest for romantic meetings?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], answer: "Wednesday" },
+    { question: "What item is often used to attract luck in Australia?", options: ["Horseshoe", "Key", "Amulet", "Ring"], answer: "Amulet" },
+    { question: "What amulet is considered a symbol of luck in Egypt?", options: ["Eye of Horus", "Pentagram", "Scepter", "Ankh"], answer: "Eye of Horus" },
+    { question: "What symbol is considered lucky in Feng Shui?", options: ["Dragon", "Lotus", "Butterfly", "Cat"], answer: "Dragon" },
+    { question: "What day of the week is considered lucky for signing contracts?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], answer: "Tuesday" },
+    { question: "What color is associated with luck in Japan?", options: ["Red", "Green", "Blue", "Black"], answer: "Red" },
+    { question: "What day of the week is considered lucky to start studying?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], answer: "Monday" },
+    { question: "What talisman brings luck in Africa?", options: ["Horseshoe", "Stone", "Amulet", "Ancient symbol"], answer: "Amulet" },
+    { question: "What item brings luck in Arab countries?", options: ["Horseshoe", "Stone", "Wonder Stone", "Incense"], answer: "Wonder Stone" }
 ];
 
 const QuizScreen = ({ navigation }) => {
+    // Перемешиваем вопросы при инициализации
+    const [shuffledQuestions, setShuffledQuestions] = useState(shuffleArray([...questions]));
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
 
     const handleAnswer = (selectedOption) => {
-        if (selectedOption === questions[currentQuestion].answer) {
+        if (selectedOption === shuffledQuestions[currentQuestion].answer) {
             setScore(score + 1);
-            if (currentQuestion < questions.length - 1) {
-                setCurrentQuestion(currentQuestion + 1);
-            } else {
-                alert("Вы выиграли! Ваш счет: " + (score + 1)); // Учитываем правильный ответ
-            }
+        }
+        
+        if (currentQuestion < shuffledQuestions.length - 1) {
+            setCurrentQuestion(currentQuestion + 1);
         } else {
-            setGameOver(true);
+            setGameOver(true); // Завершаем игру после последнего вопроса
         }
     };
 
     const resetGame = () => {
+        setShuffledQuestions(shuffleArray([...questions])); // Перемешиваем вопросы заново
         setCurrentQuestion(0);
         setScore(0);
         setGameOver(false);
@@ -79,7 +90,7 @@ const QuizScreen = ({ navigation }) => {
     );
 
     const renderOptions = () => {
-        const options = questions[currentQuestion].options;
+        const options = shuffledQuestions[currentQuestion].options;
         const optionPairs = [];
 
         for (let i = 0; i < options.length; i += 2) {
@@ -99,29 +110,31 @@ const QuizScreen = ({ navigation }) => {
         ));
     };
 
-    const ButtonMenu= ({ label, onClick }) => (
+    const ButtonMenu = ({ onClick }) => (
         <TouchableOpacity style={styles.buttonmenu} onPress={onClick} activeOpacity={0.8}>
-            <Image source={require('./button_overlay2.png')} style={styles.buttonImage2menu} />
-            <Text style={styles.buttonText}>{label}</Text>
+            <Image source={require('./home_icon.png')} style={styles.buttonImage2menu} />
         </TouchableOpacity>
     );
 
     return (
         <ImageBackground source={require('./background.png')} style={styles.background}>
-            <ButtonMenu label="Назад" onClick={() => navigation.navigate('Menu')} />
+            <ButtonMenu onClick={() => navigation.goBack()} />
             <View style={styles.container}>
                 {!gameOver ? (
                     <View style={styles.quizContainer}>
-                        <ButtonFrameQuestion label={questions[currentQuestion].question} />
+                        <ButtonFrameQuestion label={shuffledQuestions[currentQuestion].question} />
                         <View style={styles.optionsContainer}>
                             {renderOptions()}
                         </View>
                     </View>
                 ) : (
                     <View style={styles.gameOverContainer}>
-                        <Text style={styles.gameOverText}>Вы проиграли! Ваш счет: {score}</Text>
+                        <Text style={styles.gameOverText}>Вы ответили правильно на: {score} из {shuffledQuestions.length}</Text>
                         <TouchableOpacity onPress={resetGame} style={styles.resetButton}>
-                            <Text style={styles.resetText}>Начать заново</Text>
+                            <Text style={styles.resetText}>Сбросить и начать заново</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.menuButton}>
+                            <Text style={styles.menuText}>Вернуться в меню</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -141,20 +154,20 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         width: '100%',
     },
-    questionFrame: { 
-        position: 'absolute', 
-        width: '150%', 
-        height: 250, 
+    questionFrame: {
+        position: 'absolute',
+        width: '150%',
+        height: 250,
         resizeMode: 'contain'
     },
     optionRow: {
-        flexDirection: 'row', 
+        flexDirection: 'row',
         justifyContent: 'space-between',
         width: '50%',
     },
     buttonText: {
         position: 'absolute',
-        fontSize: 25,
+        fontSize: 18,
         color: '#FFFFFF',
         fontWeight: 'medium',
         textAlign: 'center',
@@ -166,8 +179,8 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     buttonImage2: {
-        width: '150%',
-        height: 150,
+        width: 200,
+        height: 70,
         resizeMode: 'contain',
     },
     frameQuest: {
@@ -204,6 +217,17 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: 'center',
     },
+    menuButton: {
+        marginTop: 10,
+        backgroundColor: '#4caf50',
+        padding: 15,
+        borderRadius: 8,
+    },
+    menuText: {
+        color: '#fff',
+        fontSize: 18,
+        textAlign: 'center',
+    },
     button: {
         width: 150,
         height: 50,
@@ -213,18 +237,18 @@ const styles = StyleSheet.create({
     },
     buttonmenu: {
         display: 'flex',
-        width: 150, // Установите ширину в соответствии с размером изображения
-        height: 50, 
+        width: 70, // Установите ширину в соответствии с размером изображения
+        height: 70,
         margin: 15,
         justifyContent: 'center',
         alignItems: 'center',
-      },
-      buttonImage2menu: {
+    },
+    buttonImage2menu: {
         position: 'absolute',
         width: '100%', // Установите ширину в 100%
-        height: 150, // Установите высоту в соответствии с размером изображения кнопки
+        height: 70, // Установите высоту в соответствии с размером изображения кнопки
         resizeMode: 'contain',
-      },
+    },
 });
 
 export default QuizScreen;

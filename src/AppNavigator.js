@@ -5,6 +5,7 @@ import MenuScreen from './components/screens/MenuScreen';
 import GameScreen from './components/screens/GameScreen';
 import QuizScreen from './components/screens/QuizGame';
 import Settings from './components/screens/Settings';
+import { BonusGame } from './components/screens/BonusGame';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Quiz"
           component={QuizScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="BonusGame"
+          component={BonusGame}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
