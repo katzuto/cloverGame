@@ -97,7 +97,7 @@ const GameScreen = ({ navigation }) => {
     const checkCollision = () => {
         items.forEach((item, index) => {
             if (
-                item.fall >= height - itemHeight - 120 &&
+                item.fall >= height - itemHeight - 140 &&
                 item.x >= basketPosition &&
                 item.x <= basketPosition + basketWidth
             ) {
