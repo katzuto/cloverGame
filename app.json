@@ -4,7 +4,7 @@
     "slug": "cloverGames",
     "version": "1.0.0",
     "orientation": "landscape",
-    "icon": "./assets/icon.png",
+    "icon": "./src/components/screens/ICON.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
