@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 import BonusGame from './BonusGame'; // Правильный путь к файлу BonusGame.js
+import { ButtonMenu } from './buttonMenu';
 
 const { width, height } = Dimensions.get('window');
 const basketWidth = 120;
@@ -157,12 +158,6 @@ const GameScreen = ({ navigation }) => {
         navigation.goBack();
     };
 
-    const ButtonMenu = ({ onClick }) => (
-        <TouchableOpacity style={styles.buttonmenu} onPress={onClick} activeOpacity={0.8}>
-            <Image source={require('./home_icon.png')} style={styles.buttonImage2menu} />
-        </TouchableOpacity>
-    );
-
     if (isBonusGame) {
         return <BonusGame onEndGame={endBonusGame} />;
     }
@@ -171,7 +166,8 @@ const GameScreen = ({ navigation }) => {
         <>
             <ImageBackground source={backgroundImage} style={styles.background}>
                 <GestureHandlerRootView style={styles.container}>
-                    <ButtonMenu onClick={HomeMenuHandler} />
+                    {/* <ButtonMenu onClick={HomeMenuHandler} /> */}
+                    <ButtonMenu navigation={navigation} />
                     <Text style={styles.score}>{score}</Text>
                     <PanGestureHandler onGestureEvent={handleGestureEvent} onEnded={handleGestureEnd}>
                         <View style={[styles.basket, { left: basketPosition }]}>
