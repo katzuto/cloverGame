@@ -60,7 +60,7 @@ const QuizScreen = ({ navigation }) => {
         if (selectedOption === shuffledQuestions[currentQuestion].answer) {
             setScore(score + 1);
         }
-        
+
         if (currentQuestion < shuffledQuestions.length - 1) {
             setCurrentQuestion(currentQuestion + 1);
         } else {
@@ -82,12 +82,12 @@ const QuizScreen = ({ navigation }) => {
         </TouchableOpacity>
     );
 
-    const ButtonFrameQuestion = ({ label }) => (
-        <View style={styles.frameQuest}>
-            <Image source={require('./frame_for_question.png')} style={styles.questionFrame} />
-            <Text style={styles.buttonText}>{label}</Text>
-        </View>
-    );
+    // const ButtonFrameQuestion = ({ label }) => (
+    //     <View style={styles.frameQuest}>
+    //         <Image source={require('./frame_for_question.png')} style={styles.questionFrame} />
+    //         <Text style={styles.buttonText}>{label}</Text>
+    //     </View>
+    // );
 
     const renderOptions = () => {
         const options = shuffledQuestions[currentQuestion].options;
@@ -122,7 +122,11 @@ const QuizScreen = ({ navigation }) => {
             <View style={styles.container}>
                 {!gameOver ? (
                     <View style={styles.quizContainer}>
-                        <ButtonFrameQuestion label={shuffledQuestions[currentQuestion].question} />
+                        <View style={styles.frameQuest}>
+                            <Image source={require('./frame_for_question.png')} style={styles.questionFrame} />
+                            <Text style={styles.buttonText}>{shuffledQuestions[currentQuestion].question}</Text>
+                        </View>
+                        {/* <ButtonFrameQuestion label={shuffledQuestions[currentQuestion].question} /> */}
                         <View style={styles.optionsContainer}>
                             {renderOptions()}
                         </View>
