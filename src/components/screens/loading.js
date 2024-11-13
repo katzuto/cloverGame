@@ -28,7 +28,10 @@ const PulsingClover = () => {
   }, [pulseAnim]);
 
   return (
-    <ImageBackground source={require('./background.png')} style={styles.background}>
+    <ImageBackground 
+      source={require('./background.png')}
+      style={styles.background}
+    >
     <View style={styles.container}>
       {/* Пульсирующий клевер */}
       <Animated.View style={[styles.cloverWrapper, { transform: [{ scale: pulseAnim }] }]}>

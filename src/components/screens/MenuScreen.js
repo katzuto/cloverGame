@@ -43,7 +43,7 @@ const MenuScreen = ({ navigation }) => {
       style={styles.background}
     >
       <View style={styles.topMenu}>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Settings')}>
           <Image source={require('./settings.png')} style={styles.icon} />
         </TouchableOpacity>
         <View style={styles.coinsContainer}>
@@ -57,9 +57,10 @@ const MenuScreen = ({ navigation }) => {
         <View style={styles.row}>
           <ButtonWithOverlay label="Play" onClick={() => navigation.navigate('Game')} />
           <ButtonWithOverlay label="Quiz" onClick={() => navigation.navigate('Quiz')} />
+          {/* <ButtonWithOverlay label="Bonus" onClick={() => navigation.navigate('BonusGame')} /> */}
         </View>
         <View style={styles.row}>
-          <ButtonWithOverlay label="Rules" />
+          <ButtonWithOverlay label="Rules" onClick={() => navigation.navigate('Rules')}/>
           <ButtonWithOverlay label="Progress" />
         </View>
       </View>
@@ -108,8 +109,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   coinIcon: {
-    width: 40,
-    height: 40,
+    width: 60,
+    height: 60,
     resizeMode: 'contain',
   },
   menuContainer: {
@@ -123,9 +124,9 @@ const styles = StyleSheet.create({
   },
   button: {
     display: 'flex',
-    width: 150, // Установите ширину в соответствии с размером изображения
-    height: 50, 
-    margin: 15,
+    width: 250, // Установите ширину в соответствии с размером изображения
+    height: 100, 
+    margin: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
   },
   buttonImageCoin: {
     position: 'absolute',
-    width: '100%',
+    width: 130,
     height: '100%',
     right: "20%",
     resizeMode: 'contain',
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     position: 'absolute',
-    fontSize: 16, // Меньший размер шрифта
+    fontSize: 25, // Меньший размер шрифта
     color: '#FFFFFF',
     fontWeight: 'medium',
     textAlign: 'center',
