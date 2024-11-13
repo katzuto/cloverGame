@@ -3,7 +3,7 @@ import WebView from 'react-native-webview'
 
 const Rules = () => {
   return (
-    <WebView source={{ uri: 'https://google.com' }} />
+    <WebView source={require('./rules.html')} />
   )
 }
 
