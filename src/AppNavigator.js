@@ -5,7 +5,7 @@ import MenuScreen from './components/screens/MenuScreen';
 import GameScreen from './components/screens/GameScreen';
 import QuizScreen from './components/screens/QuizGame';
 import Settings from './components/screens/Settings';
-import { BonusGame } from './components/screens/BonusGame';
+import BonusGame from './components/screens/BonusGame';
 import Rules from './components/screens/Rules';
 
 const Stack = createStackNavigator();

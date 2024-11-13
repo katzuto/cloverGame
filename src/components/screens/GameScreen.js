@@ -9,6 +9,8 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
+import BonusGame from './BonusGame'; // Правильный путь к файлу BonusGame.js
+import { ButtonMenu } from './buttonMenu';
 
 const { width, height } = Dimensions.get('window');
 const basketWidth = 120;
@@ -30,7 +32,6 @@ const GameScreen = ({ navigation }) => {
     const [score, setScore] = useState(0);
     const [missedItems, setMissedItems] = useState(0);
     const [isBonusGame, setIsBonusGame] = useState(false);
-    const [bonusScore, setBonusScore] = useState(0);
   
     const intervalRef = useRef(null);
     const prevBasketPosition = useRef(basketPosition);
@@ -46,7 +47,7 @@ const GameScreen = ({ navigation }) => {
             const randomType = Math.random();
             let type;
 
-            if (randomType < 0.15) {
+            if (randomType < 0.5) {
                 type = 'goldenClover';
             } else if (randomType < 0.2) {
                 type = 'coin';
@@ -102,7 +103,7 @@ const GameScreen = ({ navigation }) => {
                 item.x <= basketPosition + basketWidth
             ) {
                 if (item.type === 'goldenClover') {
-                    handleBonusClick();
+                    setIsBonusGame(true); // Входим в бонусную игру
                 } else {
                     updateScore(item.type);
                 }
@@ -128,8 +129,6 @@ const GameScreen = ({ navigation }) => {
         setBasketPosition(width / 2 - basketWidth / 2);
         prevBasketPosition.current = width / 2 - basketWidth / 2;
         setIsBonusGame(false);
-        setBonusScore(0);
-        startDroppingItems();
     };
 
     const updateScore = (type) => {
@@ -148,43 +147,27 @@ const GameScreen = ({ navigation }) => {
         }
     };
 
-    const handleBonusClick = () => {
-        setBonusScore(prev => prev + 1);
+    const endBonusGame = (isContinued) => {
+        setIsBonusGame(false);
+        if (!isContinued) {
+            resetGame(); // Сбрасываем игру, если не было золотого клевера
+        }
     };
 
-    // Rendering for bonus game
-    if (isBonusGame) {
-        return (
-            <ImageBackground source={bonusImage} style={styles.bonusContainer}>
-                {items.map((item, index) => (
-                    <Image
-                        key={index}
-                        source={goldenCloverImage}
-                        style={[styles.bonusItem, { left: item.x }]}
-                        onTouchEnd={handleBonusClick}
-                    />
-                ))}
-                <Text style={styles.bonusScore}>Бонусный счет: {bonusScore}</Text>
-            </ImageBackground>
-        );
-    }
-
-
     const HomeMenuHandler = () => {
-      navigation.goBack()
-    }
+        navigation.goBack();
+    };
 
-    const ButtonMenu = ({ onClick }) => (
-        <TouchableOpacity style={styles.buttonmenu} onPress={onClick} activeOpacity={0.8}>
-            <Image source={require('./home_icon.png')} style={styles.buttonImage2menu} />
-        </TouchableOpacity>
-    );
+    if (isBonusGame) {
+        return <BonusGame onEndGame={endBonusGame} />;
+    }
 
     return (
         <>
             <ImageBackground source={backgroundImage} style={styles.background}>
                 <GestureHandlerRootView style={styles.container}>
-                    <ButtonMenu onClick={HomeMenuHandler} />
+                    {/* <ButtonMenu onClick={HomeMenuHandler} /> */}
+                    <ButtonMenu navigation={navigation} />
                     <Text style={styles.score}>{score}</Text>
                     <PanGestureHandler onGestureEvent={handleGestureEvent} onEnded={handleGestureEnd}>
                         <View style={[styles.basket, { left: basketPosition }]}>
@@ -199,7 +182,8 @@ const GameScreen = ({ navigation }) => {
                                 item.type === 'boot' ? bootImage :
                                 item.type === 'flower' ? flowerImage :
                                 item.type === 'diamond' ? diamondImage :
-                                item.type === 'leave' ? leaveImage : null
+                                item.type === 'leave' ? leaveImage : 
+                                item.type === 'goldenClover' ? goldenCloverImage : null
                             }
                             style={[styles.item, { left: item.x, top: item.fall }]}
                         />
@@ -248,24 +232,6 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    bonusContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    bonusItem: {
-        position: 'absolute',
-        width: 50,
-        height: itemHeight,
-    },
-    bonusScore: {
-        position: 'absolute',
-        top: 50,
-        right: 20,
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#fff',
     },
     buttonmenu: {
         display: 'flex',
