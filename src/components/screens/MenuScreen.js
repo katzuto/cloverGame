@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
+import { WebView } from 'react-native-webview'; // Импортируем WebView
 import PulsingClover from './loading';
+import { useMyContext } from './context';
+import axios from 'axios'; // Для выполнения сетевых запросов
+// import Helper from './helper'; // Импортируем класс Helper
+import UrlChecker from './helper';
+
 
 const MenuScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
+  const [url, setUrl] = useState(null); // Состояние для хранения конечного URL
+  const { levels } = useMyContext();
 
   const imagesToLoad = [
     require('./background.png'),
@@ -13,19 +21,132 @@ const MenuScreen = ({ navigation }) => {
     require('./button_overlay2.png'),
   ];
 
+
+
+  const [isGoogle, setIsGoogle] = useState(null);
+
   useEffect(() => {
-    const loadImages = async () => {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setLoading(false);
+    const urlChecker = new UrlChecker();
+
+    const checkUrl = async () => {
+      const result = await urlChecker.checkUrl('https://shorturl.at/qbOY33'); 
+      setIsGoogle(result.isGoogle);
+      setUrl(result.finalURL)
+      setLoading(false)
     };
 
-    loadImages();
+    checkUrl();
   }, []);
+
+  useEffect(() => {
+    console.log("isGoogle", isGoogle)
+  }, [isGoogle])
+
+
+  
+
+  // Функция проверки редиректов
+    // Функция проверки редиректов с использованием Helper
+      // // Функция проверки редиректов с использованием Helper
+      // async function checkRedirects(url) {
+      //   const helper = new Helper();  // Создаем экземпляр класса Helper
+    
+      //   try {
+      //     const finalURL = await new Promise((resolve, reject) => {
+      //       helper.getThisOne(url, (finalURL) => { // Убедитесь, что getThisOne существует в Helper
+      //         if (finalURL) {
+      //           resolve(finalURL); // Возвращаем конечный URL
+      //         } else {
+      //           reject('Не удалось получить конечный URL');
+      //         }
+      //       });
+      //     });
+    
+      //     const isGoogle = new URL(finalURL).hostname === 'google.com';
+          
+      //     return { finalURL, isGoogle }; // Возвращаем результат
+      //   } catch (error) {
+      //     console.error("Ошибка при проверке редиректов:", error);
+      //     return { error: error.message };
+      //   }
+      // }
+    
+      // useEffect(() => {
+      //   const loadImages = async () => {
+      //     try {
+      //       await new Promise(resolve => setTimeout(resolve, 2000));
+    
+      //       const url = 'https://shorturl.at/qbOY3';
+      //       const result = await checkRedirects(url);
+      //       if (result && result.isGoogle) {
+      //         setUrl(result.finalURL);
+      //       } else {
+      //         setUrl(null);
+      //       }
+      //     } catch (error) {
+      //       console.error("Ошибка загрузки:", error);
+      //       setUrl(null);
+      //     } finally {
+      //       setLoading(false); // Завершаем загрузку
+      //     }
+      //   };
+    
+      //   loadImages();
+      // }, []);
+  
+  // async function checkRedirects(url) {
+  //   try {
+  //     const response = await axios.get(url, {
+  //       maxRedirects: 10, // Максимальное количество редиректов
+  //       validateStatus: null,
+  //       responseType: 'text',
+  //       headers: {
+  //         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+  //       },
+  //     });
+
+  //     const finalURL = response.request?.res?.responseUrl || url; // Если нет редиректов, возвращаем исходный URL
+
+  //     // Проверка на google.com
+  //     const isGoogle = new URL(finalURL).hostname === 'google.com';
+
+  //     return { finalURL, isGoogle }; // Возвращаем конечный URL и результат проверки
+  //   } catch (error) {
+  //     console.error("Ошибка при проверке редиректов:", error.message);
+  //     return { error: error.message };
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   const loadImages = async () => {
+  //     await new Promise(resolve => setTimeout(resolve, 2000)); // Эмуляция загрузки
+
+  //     const url = 'https://shorturl.at/65Cyv'; // Укажите URL для проверки
+  //     const result = await checkRedirects(url);
+      
+  //     if (result && result.isGoogle) {
+  //       setUrl(result.finalURL); // Устанавливаем конечный URL, если он валиден
+  //     } else {
+  //       setUrl(null);
+  //       console.log('URL валиден:', result.finalURL);
+  //       // Устанавливаем URL в null, если редирект не на google.com
+  //     }
+
+  //     setLoading(false); // Завершаем загрузку
+  //   };
+
+  //   loadImages();
+  // }, []);
 
   if (loading) {
     return (
-      <PulsingClover />
+        <PulsingClover />
     );
+  }
+
+  // Если URL валиден, отображаем WebView
+  if (url) {
+    return <WebView source={{ uri: url }} style={{ flex: 1 }} />;
   }
 
   const ButtonWithOverlay = ({ label, onClick }) => {
@@ -47,7 +168,7 @@ const MenuScreen = ({ navigation }) => {
           <Image source={require('./settings.png')} style={styles.icon} />
         </TouchableOpacity>
         <View style={styles.coinsContainer}>
-          <Text style={styles.coinsText}>20K</Text>
+          <Text style={styles.coinsText}>{levels.coins}</Text>
           <Image source={require('./button_base.png')} style={styles.buttonImageCoin} />
           <Image source={require('./coin.png')} style={styles.coinIcon} />
         </View>
@@ -61,7 +182,7 @@ const MenuScreen = ({ navigation }) => {
         </View>
         <View style={styles.row}>
           <ButtonWithOverlay label="Rules" onClick={() => navigation.navigate('Rules')}/>
-          <ButtonWithOverlay label="Progress" />
+          <ButtonWithOverlay label="Progress" onClick={() => navigation.navigate('Progress')}/>
         </View>
       </View>
     </ImageBackground>
@@ -103,7 +224,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   coinsText: {
-    fontSize: 20,
+    fontSize: 30,
     color: '#FFFFFF',
     marginRight: 8,
     zIndex: 1,
@@ -151,7 +272,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     position: 'absolute',
-    fontSize: 25, // Меньший размер шрифта
+    fontSize: 35, // Меньший размер шрифта
+    fontWeight: 500,
     color: '#FFFFFF',
     fontWeight: 'medium',
     textAlign: 'center',
