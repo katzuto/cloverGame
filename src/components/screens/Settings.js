@@ -2,16 +2,33 @@ import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { View, Text, Switch, StyleSheet, ImageBackground, Image } from 'react-native';
 import CustomSwitch from './customSwitch';
+import CustomSwitchSecond from './customSwitchSecond';
+import { useMyContext } from './context'; 
 
 const Settings = ({ navigation }) => {
-  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
-  const [isMusicEnabled, setIsMusicEnabled] = useState(false);
+  const [value, setValue] = useState(false)
+  const { 
+    isCustomSwitchEnabled: isSoundEnabled, 
+    updateCustomSwitch: setIsSoundEnabled 
+  } = useMyContext(); 
+
+  const { 
+    isCustomSwitchEnabledSounds: isSoundEnabledSounds, 
+    updateCustomSwitchSounds: setIsSoundEnabledSounds
+  } = useMyContext(); 
+
+  
 
   const toggleSoundSwitch = () => {
-    setIsSoundEnabled(previousState => !previousState);
+    console.log("isSoundEnabled", isSoundEnabled)
+    setIsSoundEnabled(!isSoundEnabled);
+  };
 
-  }
-  const toggleMusicSwitch = () => setIsMusicEnabled(previousState => !previousState);
+  const toggleSoundSwitchSounds = () => {
+    console.log("isSoundEnabledSounds", isSoundEnabledSounds)
+    setIsSoundEnabledSounds(!isSoundEnabledSounds);
+  };
+
 
   return (
     <ImageBackground source={require('./background.png')} style={styles.background}>
@@ -21,25 +38,25 @@ const Settings = ({ navigation }) => {
             <Image source={require('./close_icon.png')} style={styles.buttonImage} />
           </TouchableOpacity>
           <View style={styles.labelContainer}>
-            {!isSoundEnabled ? (
+            {/* {!isSoundEnabled ? (
               <Image source={require('./line_for_off_action.png')} style={styles.settingsImageOff} />
-            ) : null}
+            ) : null} */}
             <Image source={require('./sound_Icon.png')} style={styles.settingsImage} />
             <CustomSwitch
               isEnabled={isSoundEnabled}
-              onToggle={setIsSoundEnabled}
+              onToggle={toggleSoundSwitch}
               baseImage={require('./switch_frame.png')}  // Укажите путь к изображению основания
               thumbImage={require('./switch_button.png')} // Укажите путь к изображению ползунка
             />
           </View>
           <View style={styles.labelContainer}>
-            {!isMusicEnabled ? (
+            {/* {value ? (
               <Image source={require('./line_for_off_action.png')} style={styles.settingsImageOff} />
-            ) : null}
+            ) : null} */}
             <Image source={require('./music_icjn.png')} style={styles.settingsImage} />
-            <CustomSwitch
-              isEnabled={isMusicEnabled}
-              onToggle={setIsMusicEnabled}
+            <CustomSwitchSecond 
+              isEnabled={isSoundEnabledSounds}
+              onToggle={toggleSoundSwitchSounds}
               baseImage={require('./switch_frame.png')}  // Укажите путь к изображению основания
               thumbImage={require('./switch_button.png')} // Укажите путь к изображению ползунка
             />

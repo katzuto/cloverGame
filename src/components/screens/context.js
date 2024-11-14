@@ -11,6 +11,8 @@ export const MyProvider = ({ children }) => {
         coins: 0, // Текущие монеты
         quiz: 0,
     });
+    const [isCustomSwitchEnabled, setIsCustomSwitchEnabled] = useState(false); // Новое состояние
+    const [isCustomSwitchEnabledSounds, setIsCustomSwitchEnabledSounds] = useState(true); // Новое состояние
 
     // Функция для увеличения уровня бонусной игры
     const incrementBonusGame = () => {
@@ -26,7 +28,7 @@ export const MyProvider = ({ children }) => {
     // Функция для увеличения уровня викторины
     const incrementQuiz = () => {
         setLevels(prevLevels => {
-            const newQuiz = Math.min(prevLevels.quiz + 1, 1);
+            const newQuiz = Math.min(prevLevels.quiz + 1, 10); // Исправлено на 10
             return {
                 ...prevLevels,
                 quiz: newQuiz,
@@ -38,12 +40,34 @@ export const MyProvider = ({ children }) => {
     const updateCoins = (amount) => {
         setLevels(prevLevels => ({
             ...prevLevels,
-            coins: prevLevels.coins + amount, // Увеличиваем общее количество монет
+            coins: prevLevels.coins + amount,
         }));
     };
 
+    // Функция для обновления состояния переключателя
+    const updateCustomSwitch = (value) => {
+        setIsCustomSwitchEnabled(value);
+    };
+
+
+    const updateCustomSwitchSounds = (value) => {
+        setIsCustomSwitchEnabledSounds(value);
+    };
+
+    
+
     return (
-        <MyContext.Provider value={{ levels, incrementBonusGame, incrementQuiz, updateCoins }}>
+        <MyContext.Provider value={{ 
+            levels, 
+            incrementBonusGame, 
+            incrementQuiz, 
+            updateCoins, 
+            isCustomSwitchEnabled, 
+            updateCustomSwitch, 
+            updateCustomSwitchSounds,
+            setIsCustomSwitchEnabledSounds,
+            isCustomSwitchEnabledSounds
+        }}>
             {children}
         </MyContext.Provider>
     );

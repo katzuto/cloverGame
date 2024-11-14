@@ -1,21 +1,18 @@
-// src/CustomSwitch.js
 import React, { useEffect, useState } from 'react';
-import { View, Image, Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
-import { useMyContext } from './context'; // Импортируйте свой контекст
+import { TouchableOpacity, Animated, StyleSheet, Image } from 'react-native';
 
-const CustomSwitch = ({ baseImage, thumbImage }) => {
-    const { isCustomSwitchEnabled, updateCustomSwitch } = useMyContext();
-     // Извлеките состояние и функцию
-    const [thumbAnim] = useState(new Animated.Value(isCustomSwitchEnabled ? 1 : 0)); // Используйте состояние из контекста
+const CustomSwitchSecond = ({ baseImage, thumbImage, isEnabled, onToggle }) => {
+    const [thumbAnim] = useState(new Animated.Value(isEnabled ? 1 : 0)); // Инициализиуем анимацию
 
+    // Обновляем анимацию при изменении isEnabled
     useEffect(() => {
-        thumbAnim.setValue(isCustomSwitchEnabled ? 1 : 0); // Анимация при изменении состояния
-    }, [isCustomSwitchEnabled, thumbAnim]);
+        thumbAnim.setValue(isEnabled ? 1 : 0);
+    }, [isEnabled, thumbAnim]);
 
+    // Переключение свитча
     const toggleSwitch = () => {
-        const newValue = !isCustomSwitchEnabled;
-        updateCustomSwitch(newValue); // Обновите состояние через контекст
-
+        const newValue = !isEnabled;
+        onToggle(newValue); // Вызываем функцию для обновления состояния
         Animated.timing(thumbAnim, {
             toValue: newValue ? 1 : 0,
             duration: 200,
@@ -23,6 +20,7 @@ const CustomSwitch = ({ baseImage, thumbImage }) => {
         }).start();
     };
 
+    // Расчет позиции ползунка
     const thumbPosition = thumbAnim.interpolate({
         inputRange: [0, 1],
         outputRange: [0, 20], // Измените значение на соответствующее ваше значение
@@ -69,4 +67,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CustomSwitch;
+export default CustomSwitchSecond;

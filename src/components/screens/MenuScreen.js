@@ -18,7 +18,7 @@ import { baseUrl } from "./consts";
 const MenuScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [url, setUrl] = useState(null); // Состояние для хранения конечного URL
-  const { levels } = useMyContext();
+  const { levels, isCustomSwitchEnabledSounds } = useMyContext();
   
   const [sound, setSound] = useState(); // Состояние для хранения звука
 
@@ -34,11 +34,14 @@ const MenuScreen = ({ navigation }) => {
 
   // Функция для загрузки и воспроизведения звука
   const playClickSound = async () => {
-    const { sound } = await Audio.Sound.createAsync(
-      require('./click.mp3') // Путь к вашему звуковому файлу
-    );
-    setSound(sound);
-    await sound.playAsync();
+    // Проверяем состояние переключателя перед воспроизведением звука
+    if (isCustomSwitchEnabledSounds) {
+      const { sound } = await Audio.Sound.createAsync(
+        require('./click.mp3')
+      );
+      setSound(sound);
+      await sound.playAsync();
+    }
   };
 
   useEffect(() => {
