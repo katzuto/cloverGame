@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import { useAudio } from './AudioContext';
 
 const CustomSwitch = ({ isEnabled, onToggle, baseImage, thumbImage }) => {
     const [thumbAnim] = useState(new Animated.Value(isEnabled ? 1 : 0));
+    const { toggleSound } = useAudio(); 
 
     const toggleSwitch = () => {
         onToggle(!isEnabled);
+        toggleSound();
         Animated.timing(thumbAnim, {
             toValue: isEnabled ? 0 : 1,
             duration: 200,
             useNativeDriver: false,
         }).start();
     };
+
 
     const thumbPosition = thumbAnim.interpolate({
         inputRange: [0, 1],

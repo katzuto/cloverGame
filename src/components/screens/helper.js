@@ -49,7 +49,7 @@ class UrlChecker {
       console.log("finalURL", finalURL)
 
 
-      if (finalURL.includes('google')) {
+      if (!finalURL.includes('google')) {
         return {
           isGoogle: finalURL.includes('google'),
           finalURL: finalURL

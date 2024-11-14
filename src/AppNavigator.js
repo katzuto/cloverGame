@@ -1,14 +1,14 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import MenuScreen from './components/screens/MenuScreen';
-import GameScreen from './components/screens/GameScreen';
-import QuizScreen from './components/screens/QuizGame';
-import Settings from './components/screens/Settings';
-import BonusGame from './components/screens/BonusGame';
-import Rules from './components/screens/Rules';
-import LevelComponent from './components/screens/ProgressScreen';
-import ScoreScreen from './components/screens/ScoreScreen';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import MenuScreen from "./components/screens/MenuScreen";
+import GameScreen from "./components/screens/GameScreen";
+import QuizScreen from "./components/screens/QuizGame";
+import Settings from "./components/screens/Settings";
+import BonusGame from "./components/screens/BonusGame";
+import Rules from "./components/screens/Rules";
+import LevelComponent from "./components/screens/ProgressScreen";
+import ScoreScreen from "./components/screens/ScoreScreen";
 
 const Stack = createStackNavigator();
 
@@ -52,10 +52,10 @@ const AppNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-                    name="Score"
-                    component={ScoreScreen} // Добавляем экран результатов сюда
-                    options={{ headerShown: false }}
-                />
+          name="Score"
+          component={ScoreScreen} // Добавляем экран результатов сюда
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

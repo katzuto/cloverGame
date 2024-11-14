@@ -7,7 +7,10 @@ const Settings = ({ navigation }) => {
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
   const [isMusicEnabled, setIsMusicEnabled] = useState(false);
 
-  const toggleSoundSwitch = () => setIsSoundEnabled(previousState => !previousState);
+  const toggleSoundSwitch = () => {
+    setIsSoundEnabled(previousState => !previousState);
+
+  }
   const toggleMusicSwitch = () => setIsMusicEnabled(previousState => !previousState);
 
   return (
@@ -18,7 +21,7 @@ const Settings = ({ navigation }) => {
             <Image source={require('./close_icon.png')} style={styles.buttonImage} />
           </TouchableOpacity>
           <View style={styles.labelContainer}>
-            {isSoundEnabled ? (
+            {!isSoundEnabled ? (
               <Image source={require('./line_for_off_action.png')} style={styles.settingsImageOff} />
             ) : null}
             <Image source={require('./sound_Icon.png')} style={styles.settingsImage} />
@@ -30,7 +33,7 @@ const Settings = ({ navigation }) => {
             />
           </View>
           <View style={styles.labelContainer}>
-            {isMusicEnabled ? (
+            {!isMusicEnabled ? (
               <Image source={require('./line_for_off_action.png')} style={styles.settingsImageOff} />
             ) : null}
             <Image source={require('./music_icjn.png')} style={styles.settingsImage} />

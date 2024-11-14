@@ -7,7 +7,7 @@ import ScoreScreen from './ScoreScreen'; // Импортируем новый к
 const { width, height } = Dimensions.get('window');
 
 const goldenCloverImage = require('./golden_clover.png');
-const otherCloverImage = require('./boot.png');
+const otherCloverImage = require('./greenclover.png');
 
 const BonusGame = ({ navigation }) => {
     const { incrementBonusGame } = useMyContext();
