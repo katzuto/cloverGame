@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
 import PulsingClover from './loading';
+import { useMyContext } from './context';
 
 const MenuScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
+  const { levels } = useMyContext();
 
   const imagesToLoad = [
     require('./background.png'),
@@ -47,7 +49,7 @@ const MenuScreen = ({ navigation }) => {
           <Image source={require('./settings.png')} style={styles.icon} />
         </TouchableOpacity>
         <View style={styles.coinsContainer}>
-          <Text style={styles.coinsText}>20K</Text>
+          <Text style={styles.coinsText}>{levels.coins}</Text>
           <Image source={require('./button_base.png')} style={styles.buttonImageCoin} />
           <Image source={require('./coin.png')} style={styles.coinIcon} />
         </View>
@@ -61,7 +63,7 @@ const MenuScreen = ({ navigation }) => {
         </View>
         <View style={styles.row}>
           <ButtonWithOverlay label="Rules" onClick={() => navigation.navigate('Rules')}/>
-          <ButtonWithOverlay label="Progress" />
+          <ButtonWithOverlay label="Progress" onClick={() => navigation.navigate('Progress')}/>
         </View>
       </View>
     </ImageBackground>
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   coinsText: {
-    fontSize: 20,
+    fontSize: 30,
     color: '#FFFFFF',
     marginRight: 8,
     zIndex: 1,
@@ -151,7 +153,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     position: 'absolute',
-    fontSize: 25, // Меньший размер шрифта
+    fontSize: 35, // Меньший размер шрифта
+    fontWeight: 500,
     color: '#FFFFFF',
     fontWeight: 'medium',
     textAlign: 'center',

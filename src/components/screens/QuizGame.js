@@ -1,7 +1,8 @@
+// QuizScreen.js
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, ImageBackground } from 'react-native';
+import { useMyContext } from './context'; // Импортируем хук
 
-// Функция для перемешивания массива
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -50,7 +51,7 @@ const questions = [
 ];
 
 const QuizScreen = ({ navigation }) => {
-    // Перемешиваем вопросы при инициализации
+    const { incrementQuiz } = useMyContext();
     const [shuffledQuestions, setShuffledQuestions] = useState(shuffleArray([...questions]));
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [score, setScore] = useState(0);
@@ -64,12 +65,16 @@ const QuizScreen = ({ navigation }) => {
         if (currentQuestion < shuffledQuestions.length - 1) {
             setCurrentQuestion(currentQuestion + 1);
         } else {
+            // Смотрим, все ли ответы правильные
+            if (score + 1 === shuffledQuestions.length) {
+                incrementQuiz(); // Увеличиваем уровень викторины, если все ответы правильные
+            }
             setGameOver(true); // Завершаем игру после последнего вопроса
         }
     };
 
     const resetGame = () => {
-        setShuffledQuestions(shuffleArray([...questions])); // Перемешиваем вопросы заново
+        setShuffledQuestions(shuffleArray([...questions]));
         setCurrentQuestion(0);
         setScore(0);
         setGameOver(false);
@@ -81,13 +86,6 @@ const QuizScreen = ({ navigation }) => {
             <Text style={styles.buttonText}>{label}</Text>
         </TouchableOpacity>
     );
-
-    // const ButtonFrameQuestion = ({ label }) => (
-    //     <View style={styles.frameQuest}>
-    //         <Image source={require('./frame_for_question.png')} style={styles.questionFrame} />
-    //         <Text style={styles.buttonText}>{label}</Text>
-    //     </View>
-    // );
 
     const renderOptions = () => {
         const options = shuffledQuestions[currentQuestion].options;
@@ -126,7 +124,6 @@ const QuizScreen = ({ navigation }) => {
                             <Image source={require('./frame_for_question.png')} style={styles.questionFrame} />
                             <Text style={styles.buttonText}>{shuffledQuestions[currentQuestion].question}</Text>
                         </View>
-                        {/* <ButtonFrameQuestion label={shuffledQuestions[currentQuestion].question} /> */}
                         <View style={styles.optionsContainer}>
                             {renderOptions()}
                         </View>

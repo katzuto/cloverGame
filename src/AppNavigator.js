@@ -7,6 +7,8 @@ import QuizScreen from './components/screens/QuizGame';
 import Settings from './components/screens/Settings';
 import BonusGame from './components/screens/BonusGame';
 import Rules from './components/screens/Rules';
+import LevelComponent from './components/screens/ProgressScreen';
+import ScoreScreen from './components/screens/ScoreScreen';
 
 const Stack = createStackNavigator();
 
@@ -44,6 +46,16 @@ const AppNavigator = () => {
           component={Rules}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="Progress"
+          component={LevelComponent}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+                    name="Score"
+                    component={ScoreScreen} // Добавляем экран результатов сюда
+                    options={{ headerShown: false }}
+                />
       </Stack.Navigator>
     </NavigationContainer>
   );

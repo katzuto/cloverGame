@@ -1,9 +1,16 @@
 // import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 import AppNavigator from './src/AppNavigator';
+import { MyProvider } from './src/components/screens/context';
 
 export default function App() {
-  return <AppNavigator />
+  
+  return (
+  <MyProvider>
+    <AppNavigator />
+  </MyProvider>
+)
+  
 }
 
 const styles = StyleSheet.create({

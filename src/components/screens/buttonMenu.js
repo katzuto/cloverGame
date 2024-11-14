@@ -20,7 +20,8 @@ const styles = StyleSheet.create({
         margin: 15,
         justifyContent: 'center',
         alignItems: 'center',
-        left: 0,
+        left: -250,
+        top: 0,
         position: 'absolute',
     },
     buttonImage2menu: {
