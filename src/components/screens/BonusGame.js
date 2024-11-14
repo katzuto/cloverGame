@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
         right: 30,
         fontSize: 24,
         color: '#fff',
+        zIndex: 1,
     },
 });
 

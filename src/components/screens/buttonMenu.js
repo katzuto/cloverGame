@@ -5,7 +5,7 @@ export const ButtonMenu = ({ navigation }) => {
         <TouchableOpacity
             style={styles.buttonmenu}
             onPress={() => navigation.goBack()} // измените с onClick на onPress для асинхронных операций
-            activeOpacity={0.7} // уменьшите значение, если нужно быстрее реагировать
+            activeOpacity={0.7}
         >
             <Image source={require('./home_icon.png')} style={styles.buttonImage2menu} />
         </TouchableOpacity>
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
         margin: 15,
         justifyContent: 'center',
         alignItems: 'center',
-        left: -250,
+        left: 20,
         top: 0,
         position: 'absolute',
     },

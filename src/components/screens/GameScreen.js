@@ -50,7 +50,7 @@ const GameScreen = ({ navigation }) => {
       const randomType = Math.random();
       let type;
 
-      if (randomType < 0.1) {
+      if (randomType < 0.5) {
         type = 'goldenClover';
       } else if (randomType < 0.5) {
         type = 'coin';
@@ -177,10 +177,6 @@ const GameScreen = ({ navigation }) => {
     if (!isContinued) {
       resetGame();
     }
-  };
-
-  const HomeMenuHandler = () => {
-    navigation.goBack();
   };
 
   if (isBonusGame) {
