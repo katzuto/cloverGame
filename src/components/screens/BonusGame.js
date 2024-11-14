@@ -85,7 +85,7 @@ const BonusGame = ({ navigation }) => {
                         />
                     </TouchableOpacity>
                 ))}
-                <Text style={styles.scoreCounter}>Score: {goldenCloverCount}</Text>
+                <Text style={styles.scoreCounter}>{goldenCloverCount}</Text>
             </View>
         </ImageBackground>
     );
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 30,
         right: 30,
-        fontSize: 24,
+        fontSize: 32,
         color: '#fff',
         zIndex: 1,
     },

@@ -130,12 +130,12 @@ const QuizScreen = ({ navigation }) => {
                     </View>
                 ) : (
                     <View style={styles.gameOverContainer}>
-                        <Text style={styles.gameOverText}>Вы ответили правильно на: {score} из {shuffledQuestions.length}</Text>
+                        <Text style={styles.gameOverText}>You replied correctly to: {score} из {shuffledQuestions.length}</Text>
                         <TouchableOpacity onPress={resetGame} style={styles.resetButton}>
-                            <Text style={styles.resetText}>Сбросить и начать заново</Text>
+                            <Text style={styles.resetText}>Try again</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.menuButton}>
-                            <Text style={styles.menuText}>Вернуться в меню</Text>
+                            <Text style={styles.menuText}>Home</Text>
                         </TouchableOpacity>
                     </View>
                 )}

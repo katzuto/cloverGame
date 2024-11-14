@@ -50,7 +50,7 @@ const GameScreen = ({ navigation }) => {
       const randomType = Math.random();
       let type;
 
-      if (randomType < 0.5) {
+      if (randomType < 0.2) {
         type = 'goldenClover';
       } else if (randomType < 0.5) {
         type = 'coin';
@@ -188,7 +188,7 @@ const GameScreen = ({ navigation }) => {
       <ImageBackground source={backgroundImage} style={styles.background}>
         <GestureHandlerRootView style={styles.container}>
           <ButtonMenu navigation={navigation} />
-          <Text style={styles.score}>Score: {score}</Text>
+          <Text style={styles.score}>{score}</Text>
           <PanGestureHandler onGestureEvent={handleGestureEvent} onEnded={handleGestureEnd}>
             <View style={[styles.basket, { left: basketPosition }]}>
               <Image source={basketImage} style={styles.basketImage} />
