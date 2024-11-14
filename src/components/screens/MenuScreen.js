@@ -9,10 +9,9 @@ import {
   SafeAreaView,
 } from "react-native";
 import { WebView } from "react-native-webview"; // Импортируем WebView
+import { Audio } from "expo-av"; // Импортируем Audio для воспроизведения звука
 import PulsingClover from "./loading";
 import { useMyContext } from "./context";
-import axios from "axios"; // Для выполнения сетевых запросов
-// import Helper from './helper'; // Импортируем класс Helper
 import UrlChecker from "./helper";
 import { baseUrl } from "./consts";
 
@@ -20,6 +19,8 @@ const MenuScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [url, setUrl] = useState(null); // Состояние для хранения конечного URL
   const { levels } = useMyContext();
+  
+  const [sound, setSound] = useState(); // Состояние для хранения звука
 
   const imagesToLoad = [
     require("./background.png"),
@@ -30,6 +31,15 @@ const MenuScreen = ({ navigation }) => {
   ];
 
   const [isGoogle, setIsGoogle] = useState(null);
+
+  // Функция для загрузки и воспроизведения звука
+  const playClickSound = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require('./click.mp3') // Путь к вашему звуковому файлу
+    );
+    setSound(sound);
+    await sound.playAsync();
+  };
 
   useEffect(() => {
     const urlChecker = new UrlChecker();
@@ -48,6 +58,15 @@ const MenuScreen = ({ navigation }) => {
     console.log("isGoogle", isGoogle);
   }, [isGoogle]);
 
+  // Освобождаем ресурсы звука при размонтировании
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
   if (loading) {
     return <PulsingClover />;
   }
@@ -65,7 +84,10 @@ const MenuScreen = ({ navigation }) => {
     return (
       <TouchableOpacity
         style={styles.button}
-        onPress={onClick}
+        onPress={() => {
+          playClickSound(); // Воспроизведение звука при нажатии
+          onClick();
+        }}
         activeOpacity={0.8}
       >
         <Image
@@ -85,7 +107,10 @@ const MenuScreen = ({ navigation }) => {
       <View style={styles.topMenu}>
         <TouchableOpacity
           style={styles.iconButton}
-          onPress={() => navigation.navigate("Settings")}
+          onPress={() => {
+            playClickSound(); // Добавим звук при нажатии на иконку настроек
+            navigation.navigate("Settings");
+          }}
         >
           <Image source={require("./settings.png")} style={styles.icon} />
         </TouchableOpacity>
@@ -109,7 +134,6 @@ const MenuScreen = ({ navigation }) => {
             label="Quiz"
             onClick={() => navigation.navigate("Quiz")}
           />
-          {/* <ButtonWithOverlay label="Bonus" onClick={() => navigation.navigate('BonusGame')} /> */}
         </View>
         <View style={styles.row}>
           <ButtonWithOverlay
@@ -214,9 +238,8 @@ const styles = StyleSheet.create({
   buttonText: {
     position: "absolute",
     fontSize: 35, // Меньший размер шрифта
-    fontWeight: 500,
+    fontWeight: "500",
     color: "#FFFFFF",
-    fontWeight: "medium",
     textAlign: "center",
     top: "50%",
     transform: [{ translateY: -0.5 * (20 / 2) }],
